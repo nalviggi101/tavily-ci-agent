@@ -1,0 +1,17 @@
+# Assignment — starter file must not be included per instructions
+starter_agent.py
+
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# uv cache
+.uv/
+
+# macOS
+.DS_Store
