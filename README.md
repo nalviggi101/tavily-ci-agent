@@ -69,6 +69,16 @@ uv run agent.py "OpenAI"
 | `LANGFUSE_SECRET_KEY` | |
 | `LANGFUSE_BASE_URL` | e.g. `https://us.cloud.langfuse.com` |
 
+## Live trace example
+
+A real trace from the validation runs is visible in the Langfuse dashboard:
+
+**[briefing: Anthropic funding — trace `7471326e`](https://us.cloud.langfuse.com/project/cmqnywych01n1ad0cddwnr72u/traces/7471326e0b3bab7f0573a426e7ad37ee)**
+
+Shows all 6 spans (`guardrail-classify` → `extract-intent` → `decompose-queries` → `tavily-search` ×3 → `synthesize-briefing` → `llm-judge`) with the 3 quality scores attached to the parent trace.
+
+---
+
 ## CLI options
 
 | Flag | Default | Description |
