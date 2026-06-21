@@ -3,7 +3,7 @@
 **Assignment:** Tavily FDE Take-Home — Option 1 (Improve an existing application)  
 **Date:** 2026-06-21  
 **Author:** Nicholas Alviggi  
-**AI tooling:** Claude Code (claude-sonnet-4-6) via the Claude Agent SDK  
+**AI tooling:** Claude Code (claude-sonnet-4-6)  
 **Development framework:** [ai-dev-playbook](https://github.com/nicholasalviggi/ai-dev-playbook) — a personal framework for structured agentic development
 
 ---
