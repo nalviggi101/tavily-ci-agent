@@ -12,6 +12,18 @@ The six-step pipeline here maps directly to that template: guardrail → intent 
 
 ---
 
+## Repo structure
+
+| File | What it is |
+|---|---|
+| `agent.py` | The full agent — single file, all 6 pipeline steps, inline `uv` dependencies |
+| `.env.example` | Template for required API keys |
+| `BUILD_LOG.md` | Record of how this was built — decisions made, problems hit, how they were resolved |
+| `VALIDATION.md` | 5 documented test runs (3 valid queries, 2 guardrail rejections) with full output |
+| `README.md` | This file |
+
+---
+
 > **Design principle:** This agent does exactly one thing and refuses everything else.
 >
 > A general-purpose assistant with broad access is hard to trust, hard to debug, and hard to improve. A focused agent with a clear scope — company research, market trends, funding, products, industry developments — is predictable, auditable, and safe to deploy to real users. Every input is classified at the boundary; off-topic requests are rejected before a single search or LLM synthesis call runs.
@@ -98,4 +110,3 @@ Shows all 6 spans (`guardrail-classify` → `extract-intent` → `decompose-quer
 | `--days N` | 14 | Recency window passed to Tavily |
 | `--model NAME` | `moonshotai/Kimi-K2.6` | Nebius model |
 | `--no-trace` | off | Disable Langfuse tracing |
-
