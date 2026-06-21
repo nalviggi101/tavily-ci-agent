@@ -1,5 +1,17 @@
 # Competitive Intelligence Briefing Agent
 
+## Technical statement
+
+My background is in solutions engineering, and at Pryon I worked as an FDE on accounts like NVIDIA (Docs Hub) and Remedy Medical — building production retrieval pipelines that actually had to work for real users.
+
+One thing I've taken from that work: a successful agentic retrieval pipeline follows a consistent template. You check whether the input is in scope, you decouple the prompt from the retrieval step, you run the search, you compare or evaluate the results with an LLM, and then you format the response. That's the skeleton. The starter agent skipped most of it.
+
+The other design principle I believe strongly in: agents should be scoped to one job. Instead of one general assistant with broad access, you build focused agents for specific workflows, teams, or risk levels — whether that's a pipeline, an MCP, or a tool-calling agent. An agent should own one thing and own it well. For this project, I picked competitive intelligence specifically due to my interest in the AI space, but also to build something with a clear user in mind: a research analyst who needs a sourced briefing fast, not a chatbot that might answer anything.
+
+The six-step pipeline here maps directly to that template: guardrail → intent extraction → query decomposition → search → synthesis → judge. Langfuse tracing was a natural addition — in production work you need to see what's happening inside the pipeline, not just whether it returned something.
+
+---
+
 > **Design principle:** This agent does exactly one thing and refuses everything else.
 >
 > A general-purpose assistant with broad access is hard to trust, hard to debug, and hard to improve. A focused agent with a clear scope — company research, market trends, funding, products, industry developments — is predictable, auditable, and safe to deploy to real users. Every input is classified at the boundary; off-topic requests are rejected before a single search or LLM synthesis call runs.
@@ -87,14 +99,3 @@ Shows all 6 spans (`guardrail-classify` → `extract-intent` → `decompose-quer
 | `--model NAME` | `moonshotai/Kimi-K2.6` | Nebius model |
 | `--no-trace` | off | Disable Langfuse tracing |
 
----
-
-## Technical statement
-
-My background is in solutions engineering, and at Pryon I worked as an FDE on accounts like NVIDIA (Docs Hub) and Remedy Medical — building production retrieval pipelines that actually had to work for real users.
-
-One thing I've taken from that work: a successful agentic retrieval pipeline follows a consistent template. You check whether the input is in scope, you decouple the prompt from the retrieval step, you run the search, you compare or evaluate the results with an LLM, and then you format the response. That's the skeleton. The starter agent skipped most of it.
-
-The other design principle I believe strongly in: agents should be scoped to one job. Instead of one general assistant with broad access, you build focused agents for specific workflows, teams, or risk levels — whether that's a pipeline, an MCP, or a tool-calling agent. An agent should own one thing and own it well. For this project, I picked competitive intelligence specifically due to my interest in the AI space, but also to build something with a clear user in mind: a research analyst who needs a sourced briefing fast, not a chatbot that might answer anything.
-
-The six-step pipeline here maps directly to that template: guardrail → intent extraction → query decomposition → search → synthesis → judge. Langfuse tracing was a natural addition — in production work you need to see what's happening inside the pipeline, not just whether it returned something.
