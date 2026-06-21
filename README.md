@@ -91,37 +91,10 @@ Shows all 6 spans (`guardrail-classify` → `extract-intent` → `decompose-quer
 
 ## Technical statement
 
-### Design philosophy: specialized agents over general assistants
+My background is in solutions engineering, and at Pryon I worked as an FDE on accounts like NVIDIA (Docs Hub) and Remedy Medical — building production retrieval pipelines that actually had to work for real users.
 
-The single most important architectural decision in this project is what the agent *refuses* to do.
+One thing I've taken from that work: a successful agentic retrieval pipeline follows a consistent template. You check whether the input is in scope, you decouple the prompt from the retrieval step, you run the search, you compare or evaluate the results with an LLM, and then you format the response. That's the skeleton. The starter agent skipped most of it.
 
-A general-purpose assistant with broad access is a liability: unpredictable scope, hard to audit, and impossible to improve systematically because you don't know what it might be asked next. A specialized agent — one that does exactly one job and enforces that boundary at every input — is the opposite: predictable, auditable, and improvable because its failure modes are well-defined.
+The other thing I believe strongly: agents should be scoped to one job. Instead of one general assistant with broad access, you build focused agents for specific workflows, teams, or risk levels. So I picked competitive intelligence specifically — not because it was the easiest fit, but because it let me enforce a real boundary and build something with a clear user in mind: a research analyst who needs a sourced briefing fast, not a chatbot that might answer anything.
 
-This is the same principle behind purpose-built agent architectures: instead of one omnipotent assistant, you build a fleet of focused agents, each with a clear scope, appropriate access, and a well-defined interface. This agent is scoped to competitive intelligence. It will not write code, answer trivia, or summarize emails — and it enforces that explicitly, before any downstream cost is incurred.
-
-### What I changed and why
-
-The starter agent is a thin single-turn wrapper: one generic search, freeform prose output, no input validation, no observability. The improvements address four distinct failure modes that would matter to a real customer.
-
-**1. No input validation → wasted API calls and confused users.**
-The guardrails gate adds a single fast LLM call that rejects off-topic queries before any Tavily search runs. This is a standard production pattern: scope enforcement at the boundary, not after expensive downstream work has already been done.
-
-**2. Generic query decomposition → mismatched retrieval.**
-The original approach generates sub-queries from a raw string. "Anthropic funding" and "Anthropic lawsuits" would produce similar-looking queries because both mention Anthropic. Structured intent extraction first parses the query into `entity + angle + recency`, then uses those fields to generate targeted sub-queries. The decomposition prompt changes based on what the user actually wants, not just what they typed.
-
-**3. Unstructured output → hard to trust or reuse.**
-Freeform prose with URLs buried at the end is the common failure mode for research agents. Numbered inline citations tied to a structured sources section make every factual claim auditable — a requirement in any professional research context.
-
-**4. No quality signal → impossible to improve.**
-Without a quality loop, you can't tell whether the agent is getting better or worse as prompts and models change. The LLM-as-judge scores the briefing on relevance, citation coverage, and recency after each run. Langfuse stores these as scores on the trace, making quality trends visible and filterable in the dashboard over time.
-
-### Design decisions
-
-- **Single file, `uv` inline deps.** Zero setup friction — no virtualenv, no install step, no requirements.txt drift.
-- **Langfuse v4 OpenAI drop-in** (`from langfuse.openai import OpenAI`). Tokens, model names, and generation I/O are captured automatically. `@observe` decorators add the step-level span hierarchy on top.
-- **Graceful tracing.** Langfuse is optional — the agent runs identically without keys, falling back cleanly via `LANGFUSE_TRACING_ENABLED=false`.
-- **Token budget awareness.** Kimi-K2.6 is a reasoning model that uses ~250 thinking tokens before any visible output. Short calls (guardrail, intent, decompose) use a 1024-token budget; synthesis uses 8192.
-
-### Business value
-
-A competitive intelligence analyst spending 20 minutes compiling a briefing gets the same artifact in under 60 seconds, with sources. Guardrails keep the tool on-task. Intent extraction makes retrieval significantly more targeted for specific research angles (funding vs. legal vs. product). The judge loop gives a team deploying this at scale the ability to track quality over time and catch regressions before users notice them.
+The six-step pipeline here maps directly to that template: guardrail → intent extraction → query decomposition → search → synthesis → judge. Langfuse tracing was a natural addition — in production work you need to see what's happening inside the pipeline, not just whether it returned something.
