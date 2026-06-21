@@ -24,6 +24,10 @@ The six-step pipeline here maps directly to that template: guardrail → intent 
 
 ---
 
+**GitHub:** [github.com/nalviggi101/tavily-ci-agent](https://github.com/nalviggi101/tavily-ci-agent)
+
+---
+
 > **Design principle:** This agent does exactly one thing and refuses everything else.
 >
 > A general-purpose assistant with broad access is hard to trust, hard to debug, and hard to improve. A focused agent with a clear scope — company research, market trends, funding, products, industry developments — is predictable, auditable, and safe to deploy to real users. Every input is classified at the boundary; off-topic requests are rejected before a single search or LLM synthesis call runs.
